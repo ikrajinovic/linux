@@ -1,1 +1,457 @@
+korporativna@algebra.hr
+--------------------------------------
+id -> popis grupa
+whoami
+id ; whoami -> kontinuirano izvršavanje
+id \ -> pređi u red i čekaj dalje
+date -> argument i parametar
+
+man naredba -> što i kako radi naredba
+info naredba -> što i kako radi naredba
+pinfo naredba -> što i kako radi naredba
+
+passwd -> promijeni password
+less -> ispis na ekran
+
+whereis passwd -> gdje se nalazi
+
+file -> ode i pogleda što je "MAGIC" file ili naredba -> byte 0,3
+
+cat -> ispiše sve
+head -> ispiše početak
+tail -> ispiše kraj
+tail -f log -> otvori i čeka
+
+rpm -> upravljanje paketima
+dnf -> kompletna struktura - moduli, grupe
+
+pwd -> print working directory
+
+etc -> postavke -> kao regedit
+
+dev, proc -> virtualni dir
+
+cd - -> go back
+
+ls -ial -> "i" lokacija gdje se nalazi file
+
+ln drugi linknadrugi -> hard link - ime s lokacijom - pokazuje na lokaciju
+
+ln -s drugi nesto -> soft link - pokazuje na ime
+
+----------------------
+KORISNICI
+----------------------
+/etc/passwd -> popis korisnika
+
+User Id, Group id
+
+ls -aln -> vraća user id and group id
+
+/etc/groups -> popis grupa
+
+
+
+
+
+
+
+
+
+
+
+Disk naredbe:
+-----------------
+df -Th
+lsblk -l
+
+
+
+ps auxw -> svi procesi
+
+
+visudo
+
+vježbe 2:
+--------------------
+useradd <ime_usera>
+passwd <ime_usera>
+
+groupadd <ime_grupe>
+
+usermod -a -G <ime_grupe>, <ime_grupe2> <ime_usera>
+-r  -> remove from group
+
+useradd -a G <ime_grupe> <ime_usera>
+
+
+groups -> ispiši grupe
+
+
+
+groups <ime_usera> -> u kojima je korisnik
+
+id -> gdje sam ja
+
+
+
+
+/etc/passwd -> useri -> home -> shell
+/etc/shadow -> passwordi
+
+
+chgroup -> change group
+
+getfacl
+
+
+
+lsblk -> list blokova (disk)
+
+disk -> particije
+-------------------------
+fdisk /dev/vhb
+
+mkfs  -> format
+mkfs.xfs /dev/vdb1
+
+
+mnt -> mkdir disk1 disk2
+
+mount /dev/vdb1 /mnt/disk1
+
+lsblk
+
+/etc/fstab - Diskovi
+
+mount -a -> ako ima nečag ona je OK -> vraća samo error
+
+
+kreiraj particiju swap ili mkswap
+swap -> change -> swapon /dev/vdb3
+
+
+df -Th -> stanje diskova
+
+
+
+DISKOVI - PREDAVANJE 2
+--------------------------
+tune2fs -> ispisuje podatke što file system ima
+df -> ispisuje disk
+
+dd if=/dev/zero of=/dev/sdb
+
+Mreže
+-------------------------
+ip link
+ip
+netstat
+ss  -> socket stat
+ss -4 -l  -> socketi na v4
+
+ip -> može konfat adrese
+
+konfiguracija profila koji se kače na karticu
+--------------
+nmcli -> network manager -> konfanje mreže -> ip profili
+nmcli device show
+nmcli connection
+
+
+nmtui - gui za mreže
+cockpit - interface web localhost:9090 -> ubuntu/demo
+
+nslookup
+dig
+etc/nsswitch.conf
+etc/resolvconf
+
+logiranje -> severity - facility
+/var/log
+
+dmessages
+rsyslogd
+
+/etc/rsysslog.conf
+
+/etc/logrotate.conf
+
+/var/log/journal
+
+
+juarnalctl 
+
+Vježbe 03.
+-------------------------
+
+
+/etc/rsyslog.conf
+
+
+cron. /var/log/custom-cron.log
+
+https://crontab.guru/
+https://scoin.github.io/logrotate-tool/
+
+logger -t INFO "TEXT"
+
+crontab -e
+crontab -l
+
+Vježbe 04.
+------------------------
+dnsmasq
+
+/etc/dnsmasq.conf
+
+dig algebra.hr MX
+dig algebra.hr SOA -> glavni
+
+/etc/resolv.conf
+/etc/dnsmasq.conf
+
+interface=eth0
+bind-interfaces
+
+/etc/hosts
+
+firewall-cmd --add-port=53/tcp
+firewall-cmd --add-port=53/udp
+
+firewall-cmd --add-service=dhcp
+
+firewall-cmd --list-all
+firewall-cmd --runtima-to-permanent
+
+domain=domena.com
+dhcp-range=172.25.250.110,172.25.250.200,2h
+dhcp-option=option:router,1.2.3.4
+dhcp-option=option:dns-server,172.25.250.10
+dhcp-option=option:netmask,255.255.255.0
+
+
+
+dnf install bind bind-utils
+systemctl status named
+
+nmcli -> change hostname
+nmtui
+nano /etc/resolv.conf
+nameserver -> sam sebe
+
+/nano /etc/hosts -> 172.25.250.11 dns.rhcla.locla
+
+nano /etc/named.conf
+nano /etc/named.rfc1912.conf
+
+listen-on port 53 -> { any; };
+
+zone "rhcsa.local" IN {
+	type master;
+	file "forward.zone";
+	allow-update { none; };
+	};
+
+zone "0-255.250.25.172.in-add.arpa" IN {
+	type master;
+	file "reverse.zone";
+	allow-update { none };
+	};
+
+
+
+cd /var/named
+
+named.empty  -> reverse.zon
+
+nano forward
+IN SOA dns.rhcsa.local. email.rhcsa.local. (
+	2026032701 ; serial
+	IN NS dns.rhcsa.local.
+dns	IN A  172.25.250.11
+www	IN A  172.25.250.12
+email	IN A  172.25.250.10
+email	IN MX 10  172.25.250.10
+serverc	IN A  172.25.250.30
+
+
+nano reverse
+IN SOA dns.rhcsa.local. email.rhcsa.local. (
+	2026032701 ; serial
+	IN NS dns.rhcsa.local.
+11	IN PTR dns.rhcsa.local.
+12	IN PTR www.rhcsa.local.
+10	IN PTR email.rhcsa.local.
+30	IN PTR serverc.rhcsa.local.
+var	
+
+chmod o+r reverser.zone 
+
+
+-----------
+
+1. Instalacija DNS paketa/servisa 
+2. Postavljanje statičke IP adrese 
+3. Postavljanje FQDN za poslužitelja /etc/sysconfig/network 
+4. Konfiguracija /etc/hosts 
+5. Konfiguracija /etc/resolv.conf 
+6. Konfiguracija /etc/named.rfc1912.zones 
+7. Konfiguracija forward & reverse zone 
+8. chmod o+r 
+9. Restart DNS servisa
+10 provjera dig moja.domena
+
+------
+
+https://www.server-world.info/en/note?os=CentOS_Stream_9&p=dns&f=1
+
+dig rhcsa.local SOA
+
+
+-------------Predavanja 3
+proxy jump
+
+
+man nc (netcat)
+fail2ban
+
+
+cd /ssh
+ssh_config.d
+sshd_config.d
+
+
+LAB
+---------------
+dnf install postfix
+dnf install mutt
+
+
+/var/spool
+
+dnf install s-mail
+
+nmtui
+
+dig
+gi
+
+
+------------------
+
+/etc/httpd/conf/httpd.conf
+
+ps auxw | grep httpd
+
+
+PREDAVANJA - 07.04.2026.
+------------------------
+neofetch
+mdadm
+
+
+cat /proc/mdstat
+
+
+mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sde /dev/sdf
+
+
+1. fail
+2. remove
+3. 
+
+unmount md0
+mdadm --stop /dev/md0
+
+mdadm --create /dev/md1/ --level=5 --raid-devices=3 /dev/sdc /dev/sdd /dev/sde
+
+mdamd/md1 --fail /dev/sde
+mdamd/md1 --remove /dev/sde
+mdamd/md1 --add /dev/sde
+
+
+dmsg
+
+---------------LVM----------
+pvcreate    - podjeli se - formatiraj
+vgcreate    - zbroji se
+lvcreate
+
+
+
+pvcreate /dev/sdb
+fdisk /dev/sdb
+
+pvdisplay - podatci o grupi
+
+
+
+pvcreate /dev/sdc /dev/sde /dev/sdf
+
+vgcreate vg_demo /dev/sdb /dev/sde
+
+vds - koja grupa
+
+lvcreate -L 6G -n lv_demo vg_demo
+
+lvextend -l +100%FREE /dev/vg_demo/lv_demo
+
+
+resize2fs /dev/vg_demo/lv_demo
+
+
+vgextend vg_demo /dev/sde
+
+vgs -a
+
+
+pvmove /dev/sdd   -miče didk d na prazan prostor
+
+vgreduce vd_demo /dev/sdd
+pvremove /dev/sdd
+
+
+LABOS - 08.04.2026
+-------------------------------------------
+
+LVM -> volume grupe
+
+PV - Physical volume
+	pvcreate /dev/vdb /dev/vdc /dev/vdd1
+	pvdisplay ili pvs
+
+VG - Volume group
+	vgcreate VG-ime /dev/vdb /dev/vdc /dev/vdd1
+	vdextend VG-ime /dev/vdd2
+	vgdisplay ili vgs
+
+LV - Logical Volume
+	lvcreate VG-ime -L 2G -n projekt
+	
+format xfs, ext4
+mount /mnt/projekt -> xfs
+
+
+mkfs.xfc  ->disk
+lsblk -l
+
+df -Th
+
+
+
+STRATIS
+---------------------------
+
+dnf install stratisd stratis-cli
+
+systemctl start stratisd
+
+stratis pool create IME-poola /dev/vdb /dev/vdc
+
+stratis pool list
+
+stratis filesystem create  Ime-bazena projekti --size 2GiB -> kreira particije
+stratis filesystem list
+
 
